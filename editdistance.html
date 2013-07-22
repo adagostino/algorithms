@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head lang="en">
+    <meta charset="utf-8" />
+    <title>Edit Distance</title>
+    <style type="text/css">
+      html{
+        overflow: auto;
+        -webkit-tap-highlight-color: rgba(0,0,0,0);
+      }
+
+      html,body{
+        margin:0px;
+        padding:0px;
+        border:none;
+        height: 100%;
+        font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+      }
+
+      * {
+        margin: 0;
+      }
+
+      #container{
+        height: 100%;
+        width: 100%;
+      }
+
+      .title{
+        color: #888;
+        font-size: 0.8em;
+        margin: 5px 10px;
+      }
+
+      .value{
+        margin: 0px 10px;
+      }
+
+
+    </style>
+  </head>
+  <body>
+    <div id="container">
+      <div class="title">String 1</div>
+      <div id="1" class="value"></div>
+      <div class="title">String 2</div>
+      <div id="2" class="value"></div>
+      <div class="title">Edit Distance</div>
+      <div id="editDistance" class="value"></div>
+      <div class="title">Time</div>
+      <div id="time" class="value"></div>
+    </div>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <script src="javascripts/helper.js" type="text/javascript"></script>
+    <script src="javascripts/editdistance.js" type="text/javascript"></script>
+    <script type="text/javascript">
+      $(document).ready(function(){
+        var s1 = "thou shalt not";
+        var s2 = "you should not";
+        $("#1").text(s1);
+        $("#2").text(s2);
+        var ed = s1.editDistance(s2);
+        $("#editDistance").text(ed);
+        setTimeout(function(){
+          $("#time").text(helper.testTime(function(){
+            s1.editDistance(s2);
+          },"Edit Distance").average);
+        },10);
+
+      });
+
+
+
+
+    </script>
+  </body>
+
+</html>
