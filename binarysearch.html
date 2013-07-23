@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head lang="en">
+    <meta charset="utf-8" />
+    <title>Binary Search</title>
+    <style type="text/css">
+      html{
+        overflow: auto;
+        -webkit-tap-highlight-color: rgba(0,0,0,0);
+      }
+
+      html,body{
+        margin:0px;
+        padding:0px;
+        border:none;
+        height: 100%;
+        font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+      }
+
+      * {
+        margin: 0;
+      }
+
+      #container{
+        height: 100%;
+        width: 100%;
+      }
+
+      table{
+        border-spacing: 15px 3px;
+        margin: 0 auto;
+      }
+
+      th {
+        text-align: center;
+      }
+
+      td {
+        text-align: center;
+      }
+
+      td.counter{
+        font-size: 0.8em;
+        vertical-align: bottom;
+        color: #888;
+        text-align: right;
+      }
+
+      td.title{
+        color: #888;
+        text-align: right;
+      }
+
+      .benchmarks{
+        margin: 0 auto;
+        margin-top: 20px;
+      }
+      ul {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+      }
+      li {
+        display: inline-block;
+        *display: inline;
+        *zoom: 1;
+        margin: 10px;
+        max-width: 60%;
+        vertical-align: top;
+      }
+      .text{
+        color: #ccc;
+      }
+      .match{
+        color: #000;
+        background: rgba(0,0,255,.1);
+      }
+    </style>
+  </head>
+  <body>
+    <div id="#container">
+      <ul>
+        <li id="1">
+          <div class="table"></div>
+          <div class="benchmarks">
+            <table>
+              <tbody>
+                <tr>
+                  <th></th>
+                  <th style="text-align: center;">Benchmarks</th>
+                </tr>
+                <tr>
+                  <td class="title">
+                    Array Size
+                  </td>
+                  <td class="arraySize">
+
+                  </td>
+                </tr>
+                <tr>
+                  <td class="title">
+                    Search Word
+                  </td>
+                  <td class="searchWord">
+
+                  </td>
+                </tr>
+                <tr>
+                  <td class="title">
+                    Index
+                  </td>
+                  <td class="index">
+
+                  </td>
+                </tr>
+                <tr>
+                  <td class="title">
+                    Time
+                  </td>
+                  <td class="time">
+
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </li>
+        <li>
+          <div class="text">
+
+          </div>
+        </li>
+      </ul>
+
+    </div>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <script src="javascripts/helper.js" type="text/javascript"></script>
+    <script src="javascripts/moby.js", type="text/javascript"></script>
+    <script src="javascripts/binarysearch.js" type="text/javascript"></script>
+    <script type="text/javascript">
+      $(document).ready(function(){
+        // search the first 10 paragraphs of moby dick
+        var w = "Cato";
+        var s = helper.mobyDick();
+        // create a dictionary of the words -- also create an array of unique words
+        var dict = {};
+        var a = [];
+        s.replace(/\b\w+\b/g,function(word,ind){
+          // word => {len, ind:[]}
+          if (!dict[word]){
+            dict[word] = {len: word.length, ind: [ind]};
+            a.push(word);
+          }else{
+            dict[word].ind.push(ind);
+          }
+        });
+        // create and sort list
+        createList(a);
+        $(".searchWord").text(w);
+        var reg = new RegExp("\\b"+w+"\\b",'g');
+        $(".text").html(s.replace(reg,function(word){
+          return "<span class='match'>"+word+"</span>";
+        }));
+        $(".arraySize").text(a.length);
+        $(".index").text(binarySearch(a,w));
+        $(".time").text((function(){
+          return helper.testTime(function(){
+            binarySearch(a,w);
+          },"Binary Search").average;
+        })());
+      });
+
+      function createList(a){
+        var maxLen = 11;
+        var b = a.copy();
+        a.sort();
+        var $t = $("<table>");
+        var $tb = $("<tbody>")
+          .append($("<tr>").append($("<th>")).append($("<th>").text("Original")).append($("<th>").text("Sorted")))
+          .appendTo($t);
+        var max = a.length > maxLen ? maxLen : a.length;
+        for (var i=0; i<max; i++){
+          var $r = $("<tr>").append($("<td>").text(i).addClass("counter")).append($("<td>").text(b[i])).append($("<td>").text(a[i]))
+            .appendTo($tb);
+        }
+        if (a.length > maxLen){
+          var $r = $("<tr>").append($("<td>").addClass("counter")).append($("<td>").text("...")).append($("<td>").text("..."))
+            .appendTo($tb);
+        }
+        $(".table").append($t);
+
+      }
+    </script>
+  </body>
+
+</html>

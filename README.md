@@ -5,6 +5,13 @@ Here is a small repository of javascript implementations of useful algorithms. T
 
 Below is an updated list of algorithms and some minor notes on them.
 
+Binary Search
+-------------
+Skiena, SS. 2010. The Algorithm Design Manual, 2nd Ed, p.132-133. Springer-Verlag, London, United Kingdom
+(7/23/13)
+
+Pretty self explanitory. A really simple divde and conquer search that results in O(logn) time.
+
 Edit Distance
 -------------
 Skiena, SS. 2010. The Algorithm Design Manual, 2nd Ed, p.282-289. Springer-Verlag, London, United Kingdom
