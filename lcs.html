@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head lang="en">
+    <meta charset="utf-8" />
+    <title>Longest Common Substring</title>
+    <style type="text/css">
+      html{
+        overflow: auto;
+        -webkit-tap-highlight-color: rgba(0,0,0,0);
+      }
+
+      html,body{
+        margin:0px;
+        padding:0px;
+        border:none;
+        height: 100%;
+        font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+      }
+
+      * {
+        margin: 0;
+      }
+
+      #container{
+        height: 100%;
+        width: 100%;
+      }
+
+      .title{
+        color: #888;
+        font-size: 0.8em;
+        margin: 5px 10px;
+      }
+
+      .value{
+        margin: 0px 10px;
+      }
+
+      #one,#two{
+        color: #ccc;
+      }
+
+      .lcs{
+        color: black;
+        background: rgba(0,0,255,0.1);
+      }
+
+      .match{
+        color: black;
+        background: rgba(255,0,0,0.1);
+      }
+
+    </style>
+  </head>
+  <body>
+    <div id="container">
+      <div class="title">String 1</div>
+      <div id="one" class="value"></div>
+      <div class="title">String 2</div>
+      <div id="two" class="value"></div>
+      <div class="title">Min. Match Length</div>
+      <div id="minLen" class="value"></div>
+      <div class="title">Longest Common Substring</div>
+      <div id="lcs" class="value"></div>
+      <div class="title">Time</div>
+      <div id="time" class="value"></div>
+    </div>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <script src="javascripts/helper.js" type="text/javascript"></script>
+    <script src="javascripts/moby.js" type="text/javascript"></script>
+    <script src="javascripts/longestcommonsubstring.js" type="text/javascript"></script>
+    <script type="text/javascript">
+      $(document).ready(function(){
+        var minLen = 11;
+        // find an interesting set (ie: the two paragraphs with the most common substrings)
+        var maxCS = {matches: []}, indI=-1, indJ = -1;
+        for (var i=0; i<10; i++){
+          for (var j=0; j<i; j++){
+            var cs = helper.mobyDick(i).commonSubstrings(helper.mobyDick(j),minLen);
+            if (cs.matches.length > maxCS.matches.length){
+              maxCS = cs;
+              indI = i;
+              indJ = j;
+            }
+          }
+        }
+        var s1 = helper.mobyDick(indI);
+        var s2 = helper.mobyDick(indJ);
+        var cs = maxCS;
+
+        $("#one").html(concat(cs,s1,0));
+        $("#two").html(concat(cs,s2,1));
+        $("#minLen").html(minLen);
+        $("#lcs").html('"'+cs.getLongestSequence().replace(" ","&nbsp;")+'"');
+
+        setTimeout(function(){
+          $("#time").text(helper.testTime(function(){
+            s1.commonSubstrings(s2,minLen);
+          },"Longest Common Substring",100).average);
+        },10);
+
+        function concat(cs,str,i){
+          var span2 = "</span>";
+          var last = 0, ls=0; le=0;
+          var s = "";
+
+          var matches = cs.matches.copy().sort(function(a,b){
+            return a.offset[i].start - b.offset[i].start;
+          });
+
+          for (var j=0; j<matches.length; j++){
+            var c = matches[j].matchIndex == cs.longestIndex ? "lcs" : "match";
+            var start = matches[j].offset[i].start;
+            var end = matches[j].offset[i].end;
+            if (start != ls && end !=le){
+              var span1 = "<span class='"+c+"'>";
+              if (start >= last){
+                s+= (s == "" ? "" : span2)
+                    + str.substring(last,start)
+                    + span1
+                    + str.substring(start,end);
+              }else{
+                var diff = last-start;
+                s = s.substring(0, s.length - diff)
+                    + span1
+                    + s.substring(s.length - diff);
+                s+= span2
+                    + str.substring(last,end);
+              }
+            }
+            last = end;
+            ls = start;
+            le = end;
+          }
+          s+= (s == "" ? "" : span2) + str.substring(last);
+          return s;
+        }
+
+      });
+    </script>
+  </body>
+
+</html>
