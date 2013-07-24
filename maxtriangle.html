@@ -79,7 +79,17 @@
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
     <script src="javascripts/helper.js" type="text/javascript"></script>
     <script type="text/javascript">
-      // http://www.careercup.com/question?id=9992675
+      /*
+      http://www.careercup.com/question?id=9992675
+      Given a triangle like the following
+          3
+         4 6
+        1 5 0
+
+      1. How many nodes would you have, for 20 rows?
+      2. How to find the largest sum from the top of the triangle to the one of the nodes at the bottom.
+      In other words, if you consider it as a tree, find the max sum of all paths from root to the leaf.
+      */
       $(document).ready(function(){
         var t = createTriangle(50);
         drawTriangle(t);
