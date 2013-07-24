@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head lang="en">
+    <meta charset="utf-8" />
+    <title>Max Triangle</title>
+    <style type="text/css">
+      html{
+        overflow: auto;
+        -webkit-tap-highlight-color: rgba(0,0,0,0);
+      }
+
+      html,body{
+        margin:0px;
+        padding:0px;
+        border:none;
+        height: 100%;
+        font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+      }
+
+      * {
+        margin: 0;
+      }
+
+      #container{
+        height: 100%;
+        width: 100%;
+        font-size: 10px;
+      }
+      ul{
+        display: inline-block;
+        list-style: none;
+        margin: 0;
+        padding: 0;
+      }
+      li {
+        display: inline;
+        min-width: 200px;
+        padding: 0;
+        margin: 0;
+      }
+      li div{
+        display: inline-block;
+        width: 24px;
+        text-align: center;
+        height: 12px;
+        line-height: 12px;
+        color: #ccc;
+      }
+
+      .triangle{
+        margin-top: 10px;
+      }
+
+      .answer{
+        padding-left: 20px;
+        margin-top: 20px;
+        font-size: 16px;
+      }
+      .title{
+        color: #888;
+      }
+
+      .path div{
+        background: rgba(0,255,0,.1);
+        color: #000;
+        border-radius: 10px;
+      }
+
+    </style>
+  </head>
+  <body>
+    <div id="container">
+      <div class="triangle"></div>
+      <div class="answer">
+        <span class="title">Max Sum: &nbsp;</span><span class="max"></span>
+        <span class="title" style="margin-left:30px">Time: &nbsp;</span><span class="time"></span>
+      </div>
+    </div>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <script src="javascripts/helper.js" type="text/javascript"></script>
+    <script type="text/javascript">
+      // http://www.careercup.com/question?id=9992675
+      $(document).ready(function(){
+        var t = createTriangle(50);
+        drawTriangle(t);
+        var ans = maxSum(t);
+        $(".max").text(ans.val);
+        highlight(ans.ind);
+        requestAnimationFrame(function(){
+          setTimeout(function(){
+            $(".time").text((function(){
+              return helper.testTime(function(){
+                      maxSum_simple(t);
+                    },"Max Sum").average;
+              })());
+          },0);
+        });
+      });
+
+      function maxSum_simple(tri){
+        // start with the bottom row; then add it to the row on top of it and create a new
+        // array that's the max of (i,i-1) -- keep that row and continue upward
+        var row1 = [], row2 = [];
+        for (var i=tri.length-1; i>-1; i--){
+          row1 = row2;
+          row2 = [];
+          var b = tri[i];
+          for (var j=1; j< b.length; j++){
+            row2[j-1] = Math.max(b[j-1]+(row1[j-1] || 0),b[j]+(row1[j] || 0));
+          }
+        }
+        return row1[0]+tri[0][0];
+      }
+
+      function maxSum(tri){
+        var row1 = blankRow(tri[tri.length-1].length);
+
+        var ct = 0;
+        for (var i=tri.length-1; i>-1; i--){
+          var row2 = [], a = tri[i];
+          row2[0] = row1[0].val + a[0];
+          for (var j=1; j<a.length; j++){
+              row2[j] = row1[j].val + a[j];
+              if (row2[j-1] >= row2[j]){
+                row1[j-1].val = row2[j-1];
+                row1[j-1].ind[i] = j-1;
+              }else{
+                ct++;
+                row1[j-1].val = row2[j];
+                row1[j-1].ind = row1[j].ind.copy();
+                row1[j-1].ind[i] = (j);
+              }
+          }
+          i>0 && row1.pop();
+        }
+        row1[0].val+=tri[0][0];
+        row1[0].ind[0]=0;
+        return row1[0];
+
+        function blankRow(len){
+          var a = new Array();
+          for (var i=0; i<len; i++){
+            a.push({
+              val: 0,
+              ind: new Array()
+            });
+          }
+          return a;
+        }
+      }
+
+      function createTriangle(rows,max){
+        max = typeof max === "number" ? max : 100;
+        var a = new Array();
+        for (var i=0; i<rows; i++){
+          a.push(new Array().randomIntArray(i+1,max));
+        }
+        return a;
+      }
+
+      function drawTriangle(tri){
+        for (var i=0; i<tri.length; i++){
+          var ml = (tri.length-i)*12 + "px";
+          var ul = $("<ul>",{style:"margin-left:"+ml}).appendTo(".triangle");
+          for (var j=0; j<tri[i].length; j++){
+            ul.append($("<li>",{"id": i+"_"+j}).append($("<div>",{text: tri[i][j]})));
+          }
+        }
+        $(".triangle").width(24*tri.length+12);
+      }
+
+      function highlight(ind){
+        var k=0;
+        for (var i=0; i<ind.length; i++){
+          k+= parseInt($("#"+i+"_"+ind[i]).addClass("path").text());
+        }
+        console.log(k);
+      }
+    </script>
+  </body>
+
+</html>

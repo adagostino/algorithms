@@ -32,10 +32,11 @@
 
 //create array of random integers
 (function(helper){
-  Array.prototype.randomIntArray = function(length){
+  Array.prototype.randomIntArray = function(length,max){
     if (this.length > 0 || typeof length !== "number") return;
+    max = typeof max === "number" ? max : length;
     for (var i=0; i<length; i++){
-      this.push(helper.getRandomInt(0,length));
+      this.push(helper.getRandomInt(0,max));
     }
     return this;
   }
